@@ -1,21 +1,25 @@
 rem run 'where anaconda' and save the resulting path into @ana
 @echo off
-for /f %%i in ('where anaconda') do set @ana=%%i
+for /f %%i in ('where conda') do set @ana=%%i
 
 rem set p_dir to be a string activating the conda environment
 @echo off
 set _path=%@ana%
 for %%a in ("%_path%") do set "p_dir=%%~dpa"
+
 SET p_dir=%p_dir%activate
 
 rem activate the conda environment
 call %p_dir%
 
+if %errorlevel% neq 0 call C:\Users\%USERNAME%\AppData\Local\Continuum\anaconda3\Scripts\activate
+
 rem install virtualenv
 call pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org virtualenv
 
 rem create a virtual environment in the code folder
-call virtualenv Code\venv
+rem call virtualenv Code\venv
+call python -m venv Code\venv
 
 rem activate this new virtual environment
 call Code\venv\Scripts\activate
@@ -26,14 +30,16 @@ if %errorlevel% neq 0 exit
 rem install the accompanying requirements file
 call pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r Code\requirements.txt
 
-rem install jupyter into the virtual environment
-call pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org jupyter
+rem install jupyter into the virtual environment. Then install ipython, then add the virtual environment as a kernel in the local Jup Noteb
+rem call pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org jupyter
+rem call pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org ipython
+rem call ipython kernel install --user --name=venv
 
-rem install ipython into the virtual environment
-call pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org ipython
+rem run the python file of your choice
+rem call python Code\[name of file].py
 
-rem add the virtual environment as a kernel in the local jupyter notebook
-call ipython kernel install --user --name=venv
+rem install the visualisation package
+rem call pip install python-visualisation-formatting/.
 
 rem leave the window open
 cmd /k
